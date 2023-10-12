@@ -13,7 +13,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion del menu para reportar por fechas
  * fecha: 11/10/2023
  */
 
@@ -21,21 +21,16 @@ namespace CapaPresentacion
 {
     public partial class ReporteCitasFecha : Form
     {
-
         private Cita[] arrayCita = new Cita[20];
         private CN_RegistrarFecha registrarFechas = new CN_RegistrarFecha();
         private CN_ReporteFechas reportes = new CN_ReporteFechas();
         private Cita[] reportesPorFecha;
-
         public ReporteCitasFecha()
         {
             InitializeComponent();
-
         }
-
         public void LlenarComboBox()
         {
-
             dataGridCita.Rows.Clear();
             fechasComboBox.Items.Clear();
             fechasComboBox.Items.Add("Seleccione La fecha para consultar");
@@ -43,30 +38,32 @@ namespace CapaPresentacion
             arrayCita = registrarFechas.GetArray();
             foreach (Cita cita in arrayCita)
             {
-                DateTime fecha = cita.FechaHoraCita.Date;
-
-  
-                if (!fechasComboBox.Items.Contains(fecha))
+                //verifica si hay datos en el array
+                if (arrayCita[0] != null)
                 {
-                    fechasComboBox.Items.Add(fecha);
+                    DateTime fecha = cita.FechaHoraCita.Date;
+                    if (!fechasComboBox.Items.Contains(fecha))
+                    {
+                        fechasComboBox.Items.Add(fecha);
+                    }
+                }
+                // si no muesra mensaje
+                else
+                {
+                    MessageBox.Show("No hay citas registradas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
                 }
             }
-
-
         }
-
+        // realiza el reporte
         private void Consultar_Click(object sender, EventArgs e)
         {
-
             reportes.SetArrya(arrayCita);
             reportesPorFecha = reportes.ReporteFechas(fechasComboBox.Text);
             dataGridCita.Rows.Clear();
-
             foreach (Cita cita in reportesPorFecha.Where(c => c != null))
             {
-     
                 dataGridCita.Rows.Add(cita.Numero, cita.FechaHoraCita, cita.TipoConsulta.Descripcion, cita.Cliente.Nombre + " " + cita.Cliente.Apellido1, cita.Doctor.Nombre + " " + cita.Doctor.Apellido1);
-
             }
         }
     }
