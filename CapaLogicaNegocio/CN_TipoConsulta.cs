@@ -32,6 +32,7 @@ namespace CapaLogicaNegocio
             }
             else
             {
+                MessageBox.Show("La consulta fue Registrada correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
                 auxListaTiposConsulta.Add(nuevaTipoConsulta);
             }
             arrayTipoConsulta = auxListaTiposConsulta.ToArray();

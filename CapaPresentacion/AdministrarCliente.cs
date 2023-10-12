@@ -31,6 +31,7 @@ namespace CapaPresentacion
         private int cTipoConsultasIngresadas = 0;
         private CN_AdministrarClientes clientes = new CN_AdministrarClientes();
         private Cliente[] arrayClientes = new Cliente[20];
+ 
         public AdministrarCliente()
         {
             InitializeComponent();
@@ -48,6 +49,7 @@ namespace CapaPresentacion
             dataGridCliente.Columns["Column3"].ReadOnly = true;
             dataGridCliente.Columns["Column4"].ReadOnly = true;
             dataGridCliente.Columns["Column5"].ReadOnly = true;
+
         }
         //metodos 
         //metodo para vaciar el texto 

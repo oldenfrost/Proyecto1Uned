@@ -49,6 +49,9 @@
     <Compile Include="CN_AdministrarClientes.cs" />
     <Compile Include="CN_AdministrarDoctores.cs" />
     <Compile Include="CN_RegistrarFecha.cs" />
+    <Compile Include="CN_ReporteCliente.cs" />
+    <Compile Include="CN_ReporteDoctores.cs" />
+    <Compile Include="CN_ReporteFechas.cs" />
     <Compile Include="CN_TipoConsulta.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

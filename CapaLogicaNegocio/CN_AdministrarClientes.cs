@@ -31,6 +31,7 @@ namespace CapaLogicaNegocio
             }
             else
             {
+                MessageBox.Show("El cliente fue Registrado correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
                 auxListaCliente.Add(nuevoCliente);
             }
             arrayCliente = auxListaCliente.ToArray();

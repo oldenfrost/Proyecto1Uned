@@ -29,11 +29,9 @@ namespace CapaPresentacion
         private ReporteCitasFecha reporteCitasFechaP;
         private ReporteCitasDoctor reporteCitasDoctorP;
         private ReporteCitasCliente reporteCitasClienteP;
-        private Cliente[] arrayCliente;
-        private Doctor[] arrayDoctor;
-        CN_AdministrarClientes AdministrarClientes = new CN_AdministrarClientes();
 
-        private CN_AdministrarDoctores AdministrarDoctores = new CN_AdministrarDoctores();
+
+
 
 
 
@@ -49,7 +47,9 @@ namespace CapaPresentacion
             reporteCitasFechaP = new ReporteCitasFecha();
             reporteCitasDoctorP= new ReporteCitasDoctor();
             reporteCitasClienteP= new ReporteCitasCliente();
-      
+            registroCitasP = new RegistroCitas();
+          
+
 
             mostrarMenus(inicio);
 
@@ -107,16 +107,10 @@ namespace CapaPresentacion
 
         private void registrarCitasToolStripMenuItem_Click(object sender, EventArgs e)
         {
-    
-
-
-            registroCitasP = new RegistroCitas();
-
-
-
 
             mostrarMenus(registroCitasP);
-
+            registroCitasP.LlenarComboBox();
+            registroCitasP.ActualizarDataGrid();
 
         }
 
@@ -132,16 +126,24 @@ namespace CapaPresentacion
 
         private void reporteCitasPorFechaToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            reporteCitasFechaP.LlenarComboBox();
             mostrarMenus(reporteCitasFechaP);
         }
 
         private void reporteCitasPorDoctorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            reporteCitasDoctorP.LlenarComboBox();
             mostrarMenus(reporteCitasDoctorP);
+
         }
+
+
+          
+        
 
         private void reporteCitasPorClienteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            reporteCitasClienteP.LlenarComboBox();
             mostrarMenus(reporteCitasClienteP);
         }
 

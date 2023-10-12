@@ -28,9 +28,11 @@ namespace CapaLogicaNegocio
             if (auxListaDoctor.Any(c => c.Identificacion == nuevoDoctor.Identificacion))
             {
                 MessageBox.Show("El ID ya existe. Por favor, ingrese un ID único.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
             else
             {
+                MessageBox.Show("El doctor  Registrado correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
                 auxListaDoctor.Add(nuevoDoctor);
             }
             arrayDoctor = auxListaDoctor.ToArray();
