@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using CapaLogicaNegocio;
 using CapaEntidades;
+using CapaPresentacion.clasesAuxiliaries;
 
 
 
@@ -62,30 +63,13 @@ namespace CapaPresentacion
         }
        
 
-        /* metodo con una expresion regular para no permitir que se escriban caracteres
-         * que no sean enteros en los campos id*/
+        /*un evento que llama a un metodo ce la clase VerificacionId para verificar si se presiona un entero
+         con una expresion regular */
         private void idTextKeyPress(object sender, KeyPressEventArgs e)
         {
-            // expresion regular
-            Regex regex = new Regex("[^0-9]+");
-            TextBox textBox = sender as TextBox;
-            /* se declara una variable de tipoo textBox sender es el que desencadeno el evento 
-             * con el as se realiza la conversion a TextBox para poder usarse en el provider para cualquier
-             * textbox que desencadena la accion 
-             */
-             
-            if (!char.IsControl(e.KeyChar) && regex.IsMatch(e.KeyChar.ToString()))
-            {
+            VerificacionId verificacion = new VerificacionId();
+            verificacion.idTextKeyPress(sender, e, errorProvider1);
 
-                errorProvider1.SetError(textBox, "Por favor, ingrese solo números.");
-                e.Handled = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox, "");
-     
-            }
-            
         }
         // metodo para registrar los datos
         private void Registrar_Click(object sender, EventArgs e)

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion del menu para reportar citas por doctor
  * fecha: 11/10/2023
  */
 
@@ -28,10 +28,9 @@ namespace CapaPresentacion
         {
             InitializeComponent();
         }
-
+        // llena el combo bos
         public void LlenarComboBox()
         {
-
             dataGridCita.Rows.Clear();
             doctorComboBox.Items.Clear();
             doctorComboBox.Items.Add("Seleccione el/la dentista para consultar");
@@ -39,33 +38,33 @@ namespace CapaPresentacion
             arrayCita = registrarFechas.GetArray();
             foreach (Cita cita in arrayCita)
             {
-                string nombre ="ID:" +" "+cita.Doctor.Identificacion+" " +"Nombre: "+ cita.Doctor.Nombre +" "+ cita.Doctor.Apellido1 ; 
-
- 
-                if (!doctorComboBox.Items.Contains(nombre))
+                //verifica que hay datos en el el array
+                if (arrayCita[0] != null)
                 {
-                    doctorComboBox.Items.Add(nombre);
+                    string nombre = "ID:" + " " + cita.Doctor.Identificacion + " " + "Nombre: " + cita.Doctor.Nombre + " " + cita.Doctor.Apellido1;
+                    if (!doctorComboBox.Items.Contains(nombre))
+                    {
+                        doctorComboBox.Items.Add(nombre);
+                    }
+                }
+                // muestra mensaje si no los hay
+                else
+                {
+                    MessageBox.Show("No hay citas registradas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
                 }
             }
-
-
         }
-
+        // realiza la consulta
         private void Consultar_Click(object sender, EventArgs e)
         {
-
             reportes.SetArrya(arrayCita);
             string[] infoDoctorSeparada= doctorComboBox.Text.Split(' ');
             reportesPorFecha = reportes.ReporteFechas(int.Parse(infoDoctorSeparada[1]));
             dataGridCita.Rows.Clear();
-
-
-
             foreach (Cita cita in reportesPorFecha.Where(c => c != null))
             {
-
                 dataGridCita.Rows.Add(cita.Numero, cita.FechaHoraCita, cita.TipoConsulta.Descripcion, cita.Cliente.Nombre + " " + cita.Cliente.Apellido1, cita.Doctor.Nombre + " " + cita.Doctor.Apellido1);
-
             }
         }
     }

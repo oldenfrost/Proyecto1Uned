@@ -8,28 +8,19 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: clase para registrar las fechas
  * fecha: 8/10/2023
  */
-
 namespace CapaLogicaNegocio
 {
-
     public class CN_RegistrarFecha
     {
+        //atributos
         private static Cita[] arrayCitas = new Cita[20];
         private static List<Cita> auxListaCitas = new List<Cita>();
-
-
-
-
+        // metodos
         public void Registrar(int numero, DateTime fechaHoraCita, TipoConsulta tipoConsulta, Cliente cliente, Doctor doctor)
         {
-           
-    
-
-
-
             Cita Nuevacita = new Cita
             {
                 Numero = numero,
@@ -37,47 +28,32 @@ namespace CapaLogicaNegocio
                 TipoConsulta = tipoConsulta,
                 Cliente = cliente,
                 Doctor = doctor
-
-
             };
-
             if (auxListaCitas.Any(c => c.Numero == Nuevacita.Numero))
             {
                 MessageBox.Show("El ID ya existe. Por favor, ingrese un ID único.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-    
             }
             else
             {
                 if(auxListaCitas.Any(c => c.Cliente.Identificacion == Nuevacita.Cliente.Identificacion && c.FechaHoraCita == Nuevacita.FechaHoraCita))
                 {
                     MessageBox.Show("El cliente ya fue asignado a esa cita", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              
                 }
                 else if(auxListaCitas.Any(c => c.Doctor.Identificacion == Nuevacita.Doctor.Identificacion && c.FechaHoraCita == Nuevacita.FechaHoraCita))
                 {
                     MessageBox.Show("El Doctor ya fue asignado a esa cita", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
                 }
                 else
                 {
                     MessageBox.Show("La cita fue registrada correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
                     auxListaCitas.Add(Nuevacita);
-                
                 }
-              
             }
             arrayCitas = auxListaCitas.ToArray();
-
-
-
         }
-
         public Cita[] GetArray()
         {
             return arrayCitas;
         }
-    
-
-       
     }
 }

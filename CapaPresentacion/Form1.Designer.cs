@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.pMenu = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.cerrar = new System.Windows.Forms.Button();
             this.menu = new System.Windows.Forms.MenuStrip();
             this.registrarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.registrarTiposDeConsultaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,32 +50,39 @@
             // 
             // pMenu
             // 
+            this.pMenu.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(163)))), ((int)(((byte)(206)))), ((int)(((byte)(241)))));
-            this.pMenu.Controls.Add(this.button1);
+            this.pMenu.Controls.Add(this.cerrar);
             this.pMenu.Controls.Add(this.menu);
-            this.pMenu.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.pMenu.Cursor = System.Windows.Forms.Cursors.SizeAll;
             this.pMenu.Location = new System.Drawing.Point(-2, 0);
             this.pMenu.Name = "pMenu";
             this.pMenu.Size = new System.Drawing.Size(1054, 75);
             this.pMenu.TabIndex = 0;
+            this.pMenu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.pMenu.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
+            this.pMenu.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
             // 
-            // button1
+            // cerrar
             // 
-            this.button1.CausesValidation = false;
-            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(163)))), ((int)(((byte)(206)))), ((int)(((byte)(241)))));
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(150)))), ((int)(((byte)(186)))));
-            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(150)))), ((int)(((byte)(186)))));
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(1010, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(44, 44);
-            this.button1.TabIndex = 1;
-            this.button1.UseMnemonic = false;
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.cerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cerrar.CausesValidation = false;
+            this.cerrar.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cerrar.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(163)))), ((int)(((byte)(206)))), ((int)(((byte)(241)))));
+            this.cerrar.FlatAppearance.BorderSize = 0;
+            this.cerrar.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(150)))), ((int)(((byte)(186)))));
+            this.cerrar.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(96)))), ((int)(((byte)(150)))), ((int)(((byte)(186)))));
+            this.cerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cerrar.Image = ((System.Drawing.Image)(resources.GetObject("cerrar.Image")));
+            this.cerrar.Location = new System.Drawing.Point(1010, 0);
+            this.cerrar.Name = "cerrar";
+            this.cerrar.Size = new System.Drawing.Size(44, 44);
+            this.cerrar.TabIndex = 1;
+            this.cerrar.UseMnemonic = false;
+            this.cerrar.UseVisualStyleBackColor = false;
+            this.cerrar.Click += new System.EventHandler(this.button1_Click);
             // 
             // menu
             // 
@@ -94,6 +101,9 @@
             this.menu.Size = new System.Drawing.Size(1054, 38);
             this.menu.TabIndex = 2;
             this.menu.Text = "menu";
+            this.menu.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+            this.menu.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
+            this.menu.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
             // 
             // registrarToolStripMenuItem
             // 
@@ -181,6 +191,9 @@
             // 
             // ubicacionOpciones
             // 
+            this.ubicacionOpciones.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ubicacionOpciones.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(236)))), ((int)(((byte)(239)))));
             this.ubicacionOpciones.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ubicacionOpciones.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(76)))), ((int)(((byte)(119)))));
@@ -213,7 +226,7 @@
         #endregion
 
         private System.Windows.Forms.Panel pMenu;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button cerrar;
         private System.Windows.Forms.Panel ubicacionOpciones;
         private System.Windows.Forms.MenuStrip menu;
         private System.Windows.Forms.ToolStripMenuItem registrarToolStripMenuItem;

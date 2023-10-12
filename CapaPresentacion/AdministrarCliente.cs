@@ -1,5 +1,6 @@
 ﻿using CapaEntidades;
 using CapaLogicaNegocio;
+using CapaPresentacion.clasesAuxiliaries;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion para administrar cliente
  * fecha: 6/10/2023
  */
 
@@ -21,6 +22,7 @@ namespace CapaPresentacion
 {
     public partial class AdministrarCliente : Form
     {
+        //atributos
         private int id;
         private int idBuscar;
         private string nombre;
@@ -31,7 +33,6 @@ namespace CapaPresentacion
         private int cTipoConsultasIngresadas = 0;
         private CN_AdministrarClientes clientes = new CN_AdministrarClientes();
         private Cliente[] arrayClientes = new Cliente[20];
- 
         public AdministrarCliente()
         {
             InitializeComponent();
@@ -48,10 +49,10 @@ namespace CapaPresentacion
             dataGridCliente.Columns["Column2"].ReadOnly = true;
             dataGridCliente.Columns["Column3"].ReadOnly = true;
             dataGridCliente.Columns["Column4"].ReadOnly = true;
-            dataGridCliente.Columns["Column5"].ReadOnly = true;
 
         }
         //metodos 
+
         //metodo para vaciar el texto 
         private void clickText(object sender, EventArgs e)
         {
@@ -63,28 +64,10 @@ namespace CapaPresentacion
         // metodo para verificar si se escribe entero 
         private void idTextKeyPress(object sender, KeyPressEventArgs e)
         {
-            // expresion regular
-            Regex regex = new Regex("[^0-9]+");
-            TextBox textBox = sender as TextBox;
-       
-
-            if (!char.IsControl(e.KeyChar) && regex.IsMatch(e.KeyChar.ToString()))
-            {
-
-                errorProvider1.SetError(textBox, "Por favor, ingrese solo números.");
-                e.Handled = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox, "");
-
-            }
+            VerificacionId verificacion = new VerificacionId();
+            verificacion.idTextKeyPress(sender, e, errorProvider1);
 
         }
-
-
-
-
         // metodo para registrar los datos
         private void Registrar_Click(object sender, EventArgs e)
         {
@@ -124,8 +107,6 @@ namespace CapaPresentacion
                     mensaje += "El Genero no ha sido seleccionado";
                 }
                 MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
             }
 
             else
@@ -137,21 +118,16 @@ namespace CapaPresentacion
                 fecha = fechaNacimiento.Value;
                 if (generoComboBox.SelectedIndex == 1)
                 {
-                   
                     genero = 'F';
                 }
                 if (generoComboBox.SelectedIndex == 2)
                 {
-             
                     genero = 'M';
                 }
                 if (generoComboBox.SelectedIndex == 3)
                 {
-                 
                     genero = 'N';
                 }
-     
-
                 clientes.Registrar(id, nombre, apellido1, apellido2, fecha, genero);
                 cTipoConsultasIngresadas++;
                 arrayClientes = clientes.GetArray();
@@ -166,13 +142,10 @@ namespace CapaPresentacion
                 generoComboBox.SelectedItem = "Seleccione El genero";
                 fechaNacimiento.Value = DateTime.Now;
                 ActualizarDataGrid();
-
-
-
-
             }
         }
 
+        // actualiza el grid
         private void ActualizarDataGrid()
         {
             dataGridCliente.Rows.Clear();
@@ -185,8 +158,6 @@ namespace CapaPresentacion
 
         }
 
-
-
         // metodo para buscar el id y modificar
         private void buscar_Click(object sender, EventArgs e)
         {
@@ -198,29 +169,20 @@ namespace CapaPresentacion
             else
             {
                 idBuscar = int.Parse(idBuscarText.Text);
-
-            
                 char separador = ',';
                 string[] partes = clientes.Encontrar(idBuscar).Split(separador);
-
                 fechaModificacion.Value = DateTime.Parse(partes[1]);
-
-
-
                 // if para que el comboBox se selecciones con el ultimo estado seleccionado
                 if (partes[0] == "F")
                 {
                     desactivar();
                     ComboBoxIdEncontrado.SelectedItem = "Femenino";
-
-
                 }
                 // de la misma menera que el if de arriba pero para inactivo
                 else if (partes[0] == "M")
                 {
                     desactivar();
                     ComboBoxIdEncontrado.SelectedItem = "Masculino";
-
                 }
                 else
                 {
@@ -234,10 +196,8 @@ namespace CapaPresentacion
         {
             activar();
         }
-
         private void modificar_Click(object sender, EventArgs e)
         {
-
             if (ComboBoxIdEncontrado.SelectedIndex == 0)
             {
                 genero = 'F';
@@ -251,12 +211,11 @@ namespace CapaPresentacion
                 genero = 'N';
             }
             fecha = fechaModificacion.Value;
-
-
             clientes.Modificar(idBuscar,genero,fecha);
             ActualizarDataGrid();
             activar();
         }
+        //metodo desactiva algunas opcion
         private void desactivar()
         {
             idBuscarText.Enabled = false;
@@ -272,8 +231,8 @@ namespace CapaPresentacion
             generoComboBox.Enabled = false;
             registrar.Enabled = false;
             fechaModificacion.Enabled=true;
-
         }
+        //metodo activa algunas opciones
         public void activar()
         {
             idBuscarText.Enabled = true;
@@ -293,9 +252,5 @@ namespace CapaPresentacion
             idBuscarText.ForeColor = Color.DimGray;
 
         }
-
-
-
-
     }
 }

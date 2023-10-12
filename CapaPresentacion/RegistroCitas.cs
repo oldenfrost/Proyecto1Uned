@@ -1,5 +1,6 @@
 ﻿using CapaEntidades;
 using CapaLogicaNegocio;
+using CapaPresentacion.clasesAuxiliaries;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion del menu para registrar cita 
  * fecha: 8/10/2023
  */
 
@@ -25,7 +26,6 @@ namespace CapaPresentacion
 {
     public partial class RegistroCitas : Form
     {
-
         private Cliente[] arrayCliente=new Cliente[20];
         private Doctor[] arrayDoctor;
         private TipoConsulta[] arrayConsulta;
@@ -37,26 +37,6 @@ namespace CapaPresentacion
         private int cTipoConsultasIngresadas = 0;
         private int numero;
         private DateTime fechaHoraCita;
-
-
-        //atributos clientes
-        private int idCliente;
-        private string nomCliente, apel1Cliente, apel2Cliente;
-        private DateTime fechaN;
-        private char genero;
-        //atributis consultas
-        
-        private int numeroConsultas;
-        private string descripcion;
-        private char estadoConsultas;
-        // atrubutos Doctores 
-        private int idDoctor;
-        private string nomDoctor, apel1Doctor, apel2Doctor;
-        private char estadoDoctor;
-
-
-
-
         public RegistroCitas()
         {
             InitializeComponent();
@@ -71,24 +51,15 @@ namespace CapaPresentacion
             pacienteComboB.SelectedItem = "Seleccione la/el Paciente";
             tipoConsultaComboB.Items.Add("Seleccione el tipo de consulta");
             tipoConsultaComboB.SelectedItem = "Seleccione el tipo de consulta";
-
             horaCitasComboB.Items.Add("Seleccione la hora para la cita del paciente");
             horaCitasComboB.SelectedItem = "Seleccione la hora para la cita del paciente";
-   
-  
-            //VerificacionDeRegistros();
             llenarComboHoras();
         }
-
         // metodos 
-
-
-       
 
         // actualizar la dataGrid de doctores 
         public void ActualizarDataGrid()
         {
-
             arrayCliente = AdministrarClientes.GetArray();
             arrayDoctor = AdministrarDoctores.GetArray();
             arrayConsulta = TipoConsulta.GetArray();
@@ -96,18 +67,12 @@ namespace CapaPresentacion
             foreach (Doctor doctor in arrayDoctor.Where(c => c != null && c.Estado=='A'))
             {
                 dataGridDoctores.Rows.Add(doctor.Identificacion, doctor.Nombre, doctor.Apellido1, doctor.Apellido2);
-
             }
             dataGridCliente.Rows.Clear();
             foreach (Cliente cliente in arrayCliente.Where(c => c != null))
             {
                 dataGridCliente.Rows.Add(cliente.Identificacion, cliente.Nombre, cliente.Apellido1, cliente.Apellido2);
-
             }
-
-         
-
-
         }
         // limpiar el texto
         private void clickText(object sender, EventArgs e)
@@ -120,7 +85,6 @@ namespace CapaPresentacion
         // llenar el combo box
         public void LlenarComboBox()
         {
-
             arrayCliente = AdministrarClientes.GetArray();
             arrayDoctor = AdministrarDoctores.GetArray();
             arrayConsulta = TipoConsulta.GetArray();
@@ -134,30 +98,31 @@ namespace CapaPresentacion
             tipoConsultaComboB.Items.Add("Seleccione el tipo de consulta");
             tipoConsultaComboB.SelectedItem = "Seleccione el tipo de consulta";
             int i=1;
-
-            foreach (Cliente cliente in arrayCliente.Where(c => c != null))
+            if (arrayCliente[0]!=null && arrayDoctor[0]!=null && arrayConsulta[0]!= null)
             {
-         
-                pacienteComboB.Items.Add(i+"."+' '+ cliente.Nombre + " " + cliente.Apellido1);
-                i++;
-
+                foreach (Cliente cliente in arrayCliente.Where(c => c != null))
+                {
+                    pacienteComboB.Items.Add(i + "." + ' ' + cliente.Nombre + " " + cliente.Apellido1);
+                    i++;
+                }
+                i = 1;
+                foreach (Doctor doctor in arrayDoctor.Where(c => c != null && c.Estado == 'A'))
+                {
+                    doctorComboB.Items.Add(i + "." + ' ' + doctor.Nombre + "." + " " + doctor.Apellido1);
+                    i++;
+                }
+                i = 1;
+                foreach (TipoConsulta tipoConsulta in arrayConsulta.Where(c => c != null && c.Estado == 'A'))
+                {
+                    tipoConsultaComboB.Items.Add(i + "." + ' ' + tipoConsulta.Descripcion);
+                    i++;
+                }
             }
-            i = 1;
-            foreach (Doctor doctor in arrayDoctor.Where(c => c != null && c.Estado == 'A'))
+            else
             {
+                MessageBox.Show("Algunos de los datos clientes, doctores o consulta no han sido llenados", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             
-                doctorComboB.Items.Add(i + "." + ' ' + doctor.Nombre +"."+ " " + doctor.Apellido1);
-                i++;
-
-            }
-            i = 1;
-            foreach (TipoConsulta tipoConsulta in arrayConsulta.Where(c => c != null && c.Estado == 'A'))
-            {
-
-                tipoConsultaComboB.Items.Add(i+ "." + ' ' + tipoConsulta.Descripcion);
-                i++;
-
-            }
 
         }
         // asigna las horas disponbles al comboBox
@@ -173,25 +138,8 @@ namespace CapaPresentacion
 
         private void idTextKeyPress(object sender, KeyPressEventArgs e)
         {
-            // expresion regular
-            Regex regex = new Regex("[^0-9]+");
-            TextBox textBox = sender as TextBox;
-            /* se declara una variable de tipoo textBox sender es el que desencadeno el evento 
-             * con el as se realiza la conversion a TextBox para poder usarse en el provider para cualquier
-             * textbox que desencadena la accion 
-             */
-
-            if (!char.IsControl(e.KeyChar) && regex.IsMatch(e.KeyChar.ToString()))
-            {
-
-                errorProvider1.SetError(textBox, "Por favor, ingrese solo números.");
-                e.Handled = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox, "");
-
-            }
+          VerificacionId verificacion =new VerificacionId();
+            verificacion.idTextKeyPress(sender, e, errorProvider1);
 
         }
 
@@ -204,7 +152,6 @@ namespace CapaPresentacion
                 MessageBox.Show("Ya se ha insertado 20 tipos de consultas el sistema no permite añdir mas de 10 tipos de consultas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             // verificacion para determinar si los campos estan vacios o escritos o si el combo box ha sido seleccionado
             if ((idText.Text == "" || idText.Text == "Ingrese el numero de la cita") ||  pacienteComboB.SelectedItem.ToString() == "Seleccione la/el Paciente" || doctorComboB.SelectedItem.ToString() == "Seleccione el/la Dentista" || horaCitasComboB.SelectedItem.ToString() == "Seleccione la hora para la cita del paciente"||tipoConsultaComboB.SelectedItem.ToString()== "Seleccione el tipo de consulta")
             {
@@ -215,7 +162,10 @@ namespace CapaPresentacion
                 {
                     mensaje += "El campo id esta vacio o no ha sido añadido. \n";
                 }
-             
+                if (tipoConsultaComboB.SelectedItem.ToString() == "Seleccione el tipo de consulta")
+                {
+                    mensaje += "No ha sido seleccionado el tipo de consulta. \n ";
+                }
                 if (pacienteComboB.SelectedItem.ToString() == "Seleccione la/el Paciente")
                 {
                     mensaje += "No ha sido seleccionado Paciente. \n ";
@@ -229,22 +179,16 @@ namespace CapaPresentacion
                     mensaje += "No ha sido seleccionado la hora de la cita. \n ";
                 }
                 MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
             }
-
+            // llena los valores para realizar los registros
             else
             {
-          
-
                 this.numero = int.Parse(idText.Text);
-          
                 fechaHoraCita = DateTime.ParseExact(horaCitasComboB.SelectedItem.ToString(), "H:mm", CultureInfo.InvariantCulture);
                 fechaHoraCita= fechaCitaDatePicker.Value.Date.AddHours(fechaHoraCita.Hour).AddMinutes(fechaHoraCita.Minute);
+                // el valor del indice seleccionado del comboBox se le resta para obtener el mismo indice del elemento en el array con los mismo valores del combo
                 int i;
-           
                 i = tipoConsultaComboB.SelectedIndex - 1;
-
                 TipoConsulta consultaAsignar = new TipoConsulta
                 {
                     Numero = arrayConsulta[i].Numero,
@@ -252,7 +196,6 @@ namespace CapaPresentacion
                     Estado = arrayConsulta[i].Estado
                 };
                 i = pacienteComboB.SelectedIndex - 1;
-
                 Cliente clienteAsignar = new Cliente
                 {
                     Identificacion = arrayCliente[i].Identificacion,
@@ -271,40 +214,9 @@ namespace CapaPresentacion
                     Apellido2 = arrayDoctor[i].Apellido1,
                     Estado = arrayDoctor[i].Estado
                 };
-
-
-
-                registrarFechas.Registrar(numero, fechaHoraCita, consultaAsignar, clienteAsignar, doctorAsignar);
-             
-           
+                    registrarFechas.Registrar(numero, fechaHoraCita, consultaAsignar, clienteAsignar, doctorAsignar);
                     arrayCita = registrarFechas.GetArray();
-
-
-
-
-
- 
-
-
-
-
-                
-
-
-
-
             }
         }
-
-        private void Actualizar(object sender, EventArgs e)
-        {
-            arrayCliente = AdministrarClientes.GetArray();
-            arrayDoctor = AdministrarDoctores.GetArray();
-            arrayConsulta = TipoConsulta.GetArray();
-            LlenarComboBox();
-
-        }
-
-   
     }
 }
