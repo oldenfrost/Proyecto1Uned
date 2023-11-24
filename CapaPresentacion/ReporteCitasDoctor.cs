@@ -71,7 +71,7 @@ namespace CapaPresentacion
             }
             else{
                 string[] infoSeparado = doctorComboBox.Text.Split('.');
-                short idDoctor = short.Parse(infoSeparado[0]);
+                long idDoctor = long.Parse(infoSeparado[0]);
 
                 foreach (Cita cita in citaLista)
                 {

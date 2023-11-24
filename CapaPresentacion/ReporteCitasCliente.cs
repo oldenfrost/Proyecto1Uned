@@ -77,7 +77,7 @@ namespace CapaPresentacion
             else
             {
                 string[] infoSeparado = clienteComboBox.Text.Split('.');
-                short idCliente = short.Parse(infoSeparado[0]);
+               long idCliente = long.Parse(infoSeparado[0]);
                 foreach (Cita cita in citasLista)
                 {
                     if (cita.id_cliente.identificacion == idCliente)

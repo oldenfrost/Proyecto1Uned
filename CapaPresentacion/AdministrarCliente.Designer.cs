@@ -329,7 +329,7 @@
             this.buscar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buscar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(76)))), ((int)(((byte)(119)))));
             this.buscar.ImageAlign = System.Drawing.ContentAlignment.TopRight;
-            this.buscar.Location = new System.Drawing.Point(306, 403);
+            this.buscar.Location = new System.Drawing.Point(307, 408);
             this.buscar.Name = "buscar";
             this.buscar.Size = new System.Drawing.Size(119, 31);
             this.buscar.TabIndex = 26;

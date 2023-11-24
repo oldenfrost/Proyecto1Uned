@@ -23,12 +23,12 @@ namespace CapaPresentacion
 {
     public partial class AdmistracionDoctores : Form
     {
-        private int id;
+        private long id;
         private string nombre;
         private string apellido1;
         private string apellido2;
         private char estado;
-        private int cTipoConsultasIngresadas = 0;
+
         private CN_AdministrarDoctores doctores = new CN_AdministrarDoctores();
         private Doctor[] arrayDoctores = new Doctor[20];
         private List<Doctor> listaDoctor = new List<Doctor>();
@@ -102,7 +102,7 @@ namespace CapaPresentacion
             // else para inicializar los valores y registrar
             else
             {
-                id = int.Parse(idText.Text);
+                id = long.Parse(idText.Text);
                 nombre = nombreText.Text;
                 apellido1 = apellido1Text.Text;
                 apellido2 = apellido2Text.Text;

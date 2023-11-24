@@ -152,7 +152,7 @@ namespace CapaPresentacion
                 bool existe=tipoConsulta.existe(idBuscar);
                 if (existe)
                 {
-                    MessageBox.Show("El cliente fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK);
+                    MessageBox.Show("El Tipo de consulta fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK);
                     desactivar();
                     string opcionAsignada= tipoConsulta.retornarEstado(idBuscar);
                     ComboBoxIdEncontrado.SelectedItem= opcionAsignada;

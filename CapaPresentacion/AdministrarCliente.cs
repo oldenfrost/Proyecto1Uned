@@ -111,7 +111,7 @@ namespace CapaPresentacion
 
             else
             {
-                id = int.Parse(idText.Text);
+                id = long.Parse(idText.Text);
                 nombre = nombreText.Text;
                 apellido1= apellido1Text.Text;
                 apellido2= apellido2Text.Text;
@@ -168,7 +168,7 @@ namespace CapaPresentacion
             }
             else
             {
-                idBuscar = verificacion.VerificarShort(idBuscarText.Text);// este metodo tiene un  Trycatch la correccion del proyecto pasado
+                idBuscar = verificacion.VerificarInt(idBuscarText.Text);// este metodo tiene un  Trycatch la correccion del proyecto pasado
              
                 bool existe = clientes.existe(idBuscar);
                 if (existe)
@@ -182,7 +182,7 @@ namespace CapaPresentacion
                 }
                 else
                 {
-                    MessageBox.Show("El Tipo de consulta No fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("El cliente No fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
