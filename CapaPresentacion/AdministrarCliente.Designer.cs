@@ -41,6 +41,12 @@
             this.apellido2Text = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.dataGridCliente = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -54,12 +60,6 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.fechaNacimiento = new System.Windows.Forms.DateTimePicker();
             this.label9 = new System.Windows.Forms.Label();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridCliente)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
@@ -191,10 +191,46 @@
             this.Column4,
             this.Column6,
             this.Column5});
-            this.dataGridCliente.Location = new System.Drawing.Point(306, 63);
+            this.dataGridCliente.Location = new System.Drawing.Point(292, 63);
             this.dataGridCliente.Name = "dataGridCliente";
             this.dataGridCliente.Size = new System.Drawing.Size(736, 257);
             this.dataGridCliente.TabIndex = 20;
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "Id";
+            this.Column1.Name = "Column1";
+            this.Column1.Width = 122;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Nombre";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 122;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "Primer Apellido";
+            this.Column3.Name = "Column3";
+            this.Column3.Width = 122;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Segundo Apellido";
+            this.Column4.Name = "Column4";
+            this.Column4.Width = 122;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "Fecha de nacimiento";
+            this.Column6.Name = "Column6";
+            this.Column6.Width = 122;
+            // 
+            // Column5
+            // 
+            this.Column5.HeaderText = "Genero";
+            this.Column5.Name = "Column5";
+            this.Column5.Width = 122;
             // 
             // panel1
             // 
@@ -330,42 +366,6 @@
             this.label9.Size = new System.Drawing.Size(141, 20);
             this.label9.TabIndex = 32;
             this.label9.Text = "Fecha Nacimiento:";
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "Id";
-            this.Column1.Name = "Column1";
-            this.Column1.Width = 122;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Nombre";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 122;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Primer Apellido";
-            this.Column3.Name = "Column3";
-            this.Column3.Width = 122;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Segundo Apellido";
-            this.Column4.Name = "Column4";
-            this.Column4.Width = 122;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Fecha de nacimiento";
-            this.Column6.Name = "Column6";
-            this.Column6.Width = 122;
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "Genero";
-            this.Column5.Name = "Column5";
-            this.Column5.Width = 122;
             // 
             // AdministrarCliente
             // 

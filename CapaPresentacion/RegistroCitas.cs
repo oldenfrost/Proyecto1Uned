@@ -1,6 +1,9 @@
-﻿using CapaEntidades;
+﻿using CapaDatos;
+using CapaEntidades;
 using CapaLogicaNegocio;
+using CapaPresentacion.clasesAuxiliaries;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 using System.Windows.Forms;
 
 
@@ -17,7 +21,7 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion del menu para registrar cita 
  * fecha: 8/10/2023
  */
 
@@ -25,38 +29,17 @@ namespace CapaPresentacion
 {
     public partial class RegistroCitas : Form
     {
-
-        private Cliente[] arrayCliente=new Cliente[20];
-        private Doctor[] arrayDoctor;
-        private TipoConsulta[] arrayConsulta;
-        private Cita[] arrayCita= new Cita[20];
-        private CN_AdministrarClientes AdministrarClientes = new CN_AdministrarClientes();
-        private CN_AdministrarDoctores AdministrarDoctores= new CN_AdministrarDoctores();
-        private CN_TipoConsulta TipoConsulta = new CN_TipoConsulta();
         private CN_RegistrarFecha registrarFechas= new CN_RegistrarFecha();
-        private int cTipoConsultasIngresadas = 0;
-        private int numero;
+        private List<Cliente> clienteLista = new List<Cliente>();
+        private List<Doctor> listaDoctores = new List<Doctor>();
+        private List<long> idDoctoresActivos = new List<long>();
+        private List<Tipo_Consulta> listaconsultas = new List<Tipo_Consulta>();
+        private CD_Doctores d_Doctores = new CD_Doctores();
+        private CD_Clientes d_Clientes = new CD_Clientes();
+        private CD_TiposConsultas d_Consultas= new CD_TiposConsultas();
+
+        private short numero;
         private DateTime fechaHoraCita;
-
-
-        //atributos clientes
-        private int idCliente;
-        private string nomCliente, apel1Cliente, apel2Cliente;
-        private DateTime fechaN;
-        private char genero;
-        //atributis consultas
-        
-        private int numeroConsultas;
-        private string descripcion;
-        private char estadoConsultas;
-        // atrubutos Doctores 
-        private int idDoctor;
-        private string nomDoctor, apel1Doctor, apel2Doctor;
-        private char estadoDoctor;
-
-
-
-
         public RegistroCitas()
         {
             InitializeComponent();
@@ -71,43 +54,43 @@ namespace CapaPresentacion
             pacienteComboB.SelectedItem = "Seleccione la/el Paciente";
             tipoConsultaComboB.Items.Add("Seleccione el tipo de consulta");
             tipoConsultaComboB.SelectedItem = "Seleccione el tipo de consulta";
-
             horaCitasComboB.Items.Add("Seleccione la hora para la cita del paciente");
             horaCitasComboB.SelectedItem = "Seleccione la hora para la cita del paciente";
-   
-  
-            //VerificacionDeRegistros();
             llenarComboHoras();
         }
-
         // metodos 
-
-
-       
 
         // actualizar la dataGrid de doctores 
         public void ActualizarDataGrid()
         {
-
-            arrayCliente = AdministrarClientes.GetArray();
-            arrayDoctor = AdministrarDoctores.GetArray();
-            arrayConsulta = TipoConsulta.GetArray();
-            dataGridDoctores.Rows.Clear();
-            foreach (Doctor doctor in arrayDoctor.Where(c => c != null && c.Estado=='A'))
-            {
-                dataGridDoctores.Rows.Add(doctor.Identificacion, doctor.Nombre, doctor.Apellido1, doctor.Apellido2);
-
-            }
-            dataGridCliente.Rows.Clear();
-            foreach (Cliente cliente in arrayCliente.Where(c => c != null))
-            {
-                dataGridCliente.Rows.Add(cliente.Identificacion, cliente.Nombre, cliente.Apellido1, cliente.Apellido2);
-
-            }
-
+           
+           
          
+            dataGridDoctores.Rows.Clear();
+            dataGridCliente.Rows.Clear();
+            clienteLista = d_Clientes.GetClienteList();
+            listaDoctores= d_Doctores.GetDoctorList();
+            if (listaDoctores != null && listaDoctores.Count > 0)
+            {
+                foreach (Doctor doctor in listaDoctores)
+                {
+                    if (doctor.estado == 'A')
+                    {
+                        dataGridDoctores.Rows.Add(doctor.identificacion, doctor.nombre, doctor.apellido1, doctor.apellido2);
+                    }
 
+                }
 
+            }
+            if (clienteLista != null && clienteLista.Count > 0)
+            {
+                foreach (Cliente cliente in clienteLista)
+                {
+                    dataGridCliente.Rows.Add(cliente.identificacion, cliente.nombre, cliente.apellido1, cliente.apellido2);
+                }
+
+            }
+          
         }
         // limpiar el texto
         private void clickText(object sender, EventArgs e)
@@ -121,9 +104,11 @@ namespace CapaPresentacion
         public void LlenarComboBox()
         {
 
-            arrayCliente = AdministrarClientes.GetArray();
-            arrayDoctor = AdministrarDoctores.GetArray();
-            arrayConsulta = TipoConsulta.GetArray();
+            idDoctoresActivos.Clear();
+            clienteLista = d_Clientes.GetClienteList();
+            listaDoctores = d_Doctores.GetDoctorList();
+            listaconsultas = d_Consultas.GetTipoConsultaList();
+
             pacienteComboB.Items.Clear();
             doctorComboB.Items.Clear();
             tipoConsultaComboB.Items.Clear();
@@ -133,31 +118,45 @@ namespace CapaPresentacion
             pacienteComboB.SelectedItem = "Seleccione la/el Paciente";
             tipoConsultaComboB.Items.Add("Seleccione el tipo de consulta");
             tipoConsultaComboB.SelectedItem = "Seleccione el tipo de consulta";
-            int i=1;
+   
 
-            foreach (Cliente cliente in arrayCliente.Where(c => c != null))
+            if ((listaDoctores != null && listaDoctores.Count > 0) && (clienteLista != null && clienteLista.Count > 0))
             {
+                foreach (Cliente cliente in clienteLista)
+                {
+                    pacienteComboB.Items.Add(cliente.identificacion + "." + ' ' + cliente.nombre + " " + cliente.apellido1);
          
-                pacienteComboB.Items.Add(i+"."+' '+ cliente.Nombre + " " + cliente.Apellido1);
-                i++;
+                }
+  
+                foreach (Doctor doctor in listaDoctores)
+                {
+                    if (doctor.estado == 'A')
+                    {
+                     
+                        doctorComboB.Items.Add(doctor.identificacion + "." + ' ' + doctor.nombre + "." + " " + doctor.apellido1);
+              
+                    }
+                  
+                }
+      
 
-            }
-            i = 1;
-            foreach (Doctor doctor in arrayDoctor.Where(c => c != null && c.Estado == 'A'))
-            {
+
+
+                foreach (Tipo_Consulta tipoConsulta in listaconsultas)
+                {
+                    if (tipoConsulta.estado == 'A')
+                    {
+                        tipoConsultaComboB.Items.Add(tipoConsulta.numero + "." + ' ' + tipoConsulta.descripcion);
             
-                doctorComboB.Items.Add(i + "." + ' ' + doctor.Nombre +"."+ " " + doctor.Apellido1);
-                i++;
-
+                    }
+                        
+                }
             }
-            i = 1;
-            foreach (TipoConsulta tipoConsulta in arrayConsulta.Where(c => c != null && c.Estado == 'A'))
+            else
             {
-
-                tipoConsultaComboB.Items.Add(i+ "." + ' ' + tipoConsulta.Descripcion);
-                i++;
-
+                MessageBox.Show("Algunos de los datos clientes, doctores o consulta no han sido llenados", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+            
 
         }
         // asigna las horas disponbles al comboBox
@@ -173,25 +172,8 @@ namespace CapaPresentacion
 
         private void idTextKeyPress(object sender, KeyPressEventArgs e)
         {
-            // expresion regular
-            Regex regex = new Regex("[^0-9]+");
-            TextBox textBox = sender as TextBox;
-            /* se declara una variable de tipoo textBox sender es el que desencadeno el evento 
-             * con el as se realiza la conversion a TextBox para poder usarse en el provider para cualquier
-             * textbox que desencadena la accion 
-             */
-
-            if (!char.IsControl(e.KeyChar) && regex.IsMatch(e.KeyChar.ToString()))
-            {
-
-                errorProvider1.SetError(textBox, "Por favor, ingrese solo números.");
-                e.Handled = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox, "");
-
-            }
+          CN_VerificacionId verificacion =new CN_VerificacionId();
+            verificacion.idTextKeyPress(sender, e, errorProvider1);
 
         }
 
@@ -199,12 +181,7 @@ namespace CapaPresentacion
         private void Registrar_Click(object sender, EventArgs e)
         {
             string mensaje = "";
-            if (cTipoConsultasIngresadas > 19)
-            {
-                MessageBox.Show("Ya se ha insertado 20 tipos de consultas el sistema no permite añdir mas de 10 tipos de consultas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
+      
             // verificacion para determinar si los campos estan vacios o escritos o si el combo box ha sido seleccionado
             if ((idText.Text == "" || idText.Text == "Ingrese el numero de la cita") ||  pacienteComboB.SelectedItem.ToString() == "Seleccione la/el Paciente" || doctorComboB.SelectedItem.ToString() == "Seleccione el/la Dentista" || horaCitasComboB.SelectedItem.ToString() == "Seleccione la hora para la cita del paciente"||tipoConsultaComboB.SelectedItem.ToString()== "Seleccione el tipo de consulta")
             {
@@ -215,7 +192,10 @@ namespace CapaPresentacion
                 {
                     mensaje += "El campo id esta vacio o no ha sido añadido. \n";
                 }
-             
+                if (tipoConsultaComboB.SelectedItem.ToString() == "Seleccione el tipo de consulta")
+                {
+                    mensaje += "No ha sido seleccionado el tipo de consulta. \n ";
+                }
                 if (pacienteComboB.SelectedItem.ToString() == "Seleccione la/el Paciente")
                 {
                     mensaje += "No ha sido seleccionado Paciente. \n ";
@@ -229,82 +209,26 @@ namespace CapaPresentacion
                     mensaje += "No ha sido seleccionado la hora de la cita. \n ";
                 }
                 MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
             }
-
+            // llena los valores para realizar los registros
             else
             {
-          
-
-                this.numero = int.Parse(idText.Text);
-          
+                
+                this.numero = short.Parse(idText.Text);
                 fechaHoraCita = DateTime.ParseExact(horaCitasComboB.SelectedItem.ToString(), "H:mm", CultureInfo.InvariantCulture);
                 fechaHoraCita= fechaCitaDatePicker.Value.Date.AddHours(fechaHoraCita.Hour).AddMinutes(fechaHoraCita.Minute);
-                int i;
-           
-                i = tipoConsultaComboB.SelectedIndex - 1;
+                // el valor del indice seleccionado del comboBox se le resta para obtener el mismo indice del elemento en el array con los mismo valores del combo
+                string[] infoSeparado = tipoConsultaComboB.Text.Split('.');
+                short numeroConsulta = short.Parse(infoSeparado[0]);
+                infoSeparado = pacienteComboB.Text.Split('.');
+                long numeroCliente = long.Parse(infoSeparado[0]);
+                infoSeparado = doctorComboB.Text.Split('.');
+                long numeroDoctor = long.Parse(infoSeparado[0]);
 
-                TipoConsulta consultaAsignar = new TipoConsulta
-                {
-                    Numero = arrayConsulta[i].Numero,
-                    Descripcion = arrayConsulta[i].Descripcion,
-                    Estado = arrayConsulta[i].Estado
-                };
-                i = pacienteComboB.SelectedIndex - 1;
-
-                Cliente clienteAsignar = new Cliente
-                {
-                    Identificacion = arrayCliente[i].Identificacion,
-                    Nombre = arrayCliente[i].Nombre,
-                    Apellido1 = arrayCliente[i].Apellido1,
-                    Apellido2 = arrayCliente[i].Apellido2,
-                    FechaNacimiento = arrayCliente[i].FechaNacimiento,
-                    Genero = arrayCliente[i].Genero
-                };
-                i = doctorComboB.SelectedIndex - 1;
-                Doctor doctorAsignar = new Doctor
-                {
-                    Identificacion = arrayDoctor[i].Identificacion,
-                    Nombre = arrayDoctor[i].Nombre,
-                    Apellido1 = arrayDoctor[i].Apellido1,
-                    Apellido2 = arrayDoctor[i].Apellido1,
-                    Estado = arrayDoctor[i].Estado
-                };
-
-
-
-                registrarFechas.Registrar(numero, fechaHoraCita, consultaAsignar, clienteAsignar, doctorAsignar);
-             
-           
-                    arrayCita = registrarFechas.GetArray();
-
-
-
-
-
- 
-
-
-
-
-                
-
-
+                registrarFechas.Registrar(numero, fechaHoraCita, numeroConsulta, numeroCliente, numeroDoctor);
 
 
             }
         }
-
-        private void Actualizar(object sender, EventArgs e)
-        {
-            arrayCliente = AdministrarClientes.GetArray();
-            arrayDoctor = AdministrarDoctores.GetArray();
-            arrayConsulta = TipoConsulta.GetArray();
-            LlenarComboBox();
-
-        }
-
-   
     }
 }

@@ -5,7 +5,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CapaDatos;
 using CapaEntidades;
+/* Uned III Cuatrimestre 
+ * Eduardo Cespedes miranda 
+ * Descripcion: mejoras realizadas clase para registrar y modificar los tipos de consultas
+ * fecha: 12/11/2023
+ */
 
 
 namespace CapaLogicaNegocio
@@ -13,84 +19,95 @@ namespace CapaLogicaNegocio
     public class CN_TipoConsulta
     {
         // atributos de la clase
-        private  List <TipoConsulta> auxListaTiposConsulta=new List<TipoConsulta>();
-        private static TipoConsulta[] arrayTipoConsulta=new TipoConsulta[10];
-      
+        private  List <Tipo_Consulta> ListaTiposConsulta=new List<Tipo_Consulta>();
+        private CD_TiposConsultas d_TiposConsultas = new CD_TiposConsultas();
+
         // metodo para registrar
-       public void Registrar( int id, string descripcion, char estado, int tipoConsultasIngresadas)
+       public void Registrar( short id, string descripcion, char estado)
         {
-            TipoConsulta nuevaTipoConsulta= new TipoConsulta { 
-            Numero=id,
-            Descripcion=descripcion,
-            Estado=estado
+            Tipo_Consulta nuevaTipoConsulta= new Tipo_Consulta { 
+            numero=id,
+            descripcion=descripcion,
+            estado=estado
             };
 
-
-            if (auxListaTiposConsulta.Any(c => c.Numero == nuevaTipoConsulta.Numero))
+            if(existe(id))
             {
                 MessageBox.Show("El ID ya existe. Por favor, ingrese un ID único.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+
             }
-            else
+            if(existe(id)==false)
             {
-                MessageBox.Show("La consulta fue Registrada correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
-                auxListaTiposConsulta.Add(nuevaTipoConsulta);
+                MessageBox.Show("El Tipo de consulta fue Registrado correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
+                d_TiposConsultas.insertarTipoConsulta(nuevaTipoConsulta);
             }
-            arrayTipoConsulta = auxListaTiposConsulta.ToArray();
+
+
+
 
         }
-
-        // metodo get para retornar el array
-        public  TipoConsulta[] GetArray()
+        public void Modificar(short id, string descripcion, char estado)
         {
-            return arrayTipoConsulta;
+            Tipo_Consulta nuevaTipoConsulta = new Tipo_Consulta
+            {
+                numero = id,
+                descripcion = descripcion,
+                estado = estado
+            };
+            d_TiposConsultas.ActualizarTipoConsulta(nuevaTipoConsulta);
         }
-        public char Encontrar(int idBuscar)
+
+
+        public bool existe(short id)
         {
-          
-            char estado='n';
-            if (arrayTipoConsulta.Any(c => c != null && c.Numero == idBuscar))
+            ListaTiposConsulta = d_TiposConsultas.GetTipoConsultaList();
+            bool existe = false;
+            if (ListaTiposConsulta.Count == 0)
             {
-              
-                var consultaParaActualizar = arrayTipoConsulta.FirstOrDefault(c =>  c.Numero == idBuscar);
-                estado = consultaParaActualizar.Estado;
-                MessageBox.Show("El dato fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK);
-
-
+                existe = false;
             }
 
 
-          
-            else
+            foreach (Tipo_Consulta tipoConsulta in ListaTiposConsulta)
             {
-                MessageBox.Show("El Id no existe por favor verifique en la tabla para visualizar los datos insertados", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-         
-
+                if (tipoConsulta.numero == id)
+                {
+                   return true;
+                }
+                else
+                {
+                    existe = false;
+                }
             }
-
-            
-          
-            return estado;
-    
+            return existe;
         }
-
-
-
-
-        // metodo para modificar
-        public void Modificar(int idBuscar, char estado)
+        public string retornarEstado(short id)
         {
-            if (arrayTipoConsulta.Any(c => c != null && c.Numero == idBuscar))
+            char estado='A';
+            string descripcion="";
+            foreach (Tipo_Consulta tipoConsulta in ListaTiposConsulta)
             {
-
-                var consultaParaActualizar = arrayTipoConsulta.FirstOrDefault(c => c.Numero == idBuscar);
-                consultaParaActualizar.Estado= estado;
-                MessageBox.Show("El dato fue Actualizado correctamente", "Actualizado", MessageBoxButtons.OK);
-
+                if (tipoConsulta.numero == id)
+                {
+                     descripcion = (estado == 'A') ? "Activo" : "Inactivo";
+                }
+             
+            }
+            return descripcion;
+        }
+        public string retornarDescripcion(short id)
+        {
+            string descripcion = "";
+            foreach (Tipo_Consulta tipoConsulta in ListaTiposConsulta)
+            {
+                if (tipoConsulta.numero == id)
+                {
+                    descripcion = tipoConsulta.descripcion;
+                }
 
             }
-
-
+            return descripcion;
         }
-
     }
 }

@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion del menu para reportar citas por doctor
  * fecha: 11/10/2023
  */
 
@@ -20,52 +20,67 @@ namespace CapaPresentacion
 {
     public partial class ReporteCitasDoctor : Form
     {
-        private Cita[] arrayCita = new Cita[20];
-        private CN_RegistrarFecha registrarFechas = new CN_RegistrarFecha();
+       
         private CN_ReporteDoctores reportes = new CN_ReporteDoctores();
-        private Cita[] reportesPorFecha;
+        private List<Cita> citaLista= new List<Cita>(); 
+
         public ReporteCitasDoctor()
         {
             InitializeComponent();
         }
-
+        // llena el combo bos
         public void LlenarComboBox()
         {
 
             dataGridCita.Rows.Clear();
             doctorComboBox.Items.Clear();
-            doctorComboBox.Items.Add("Seleccione el/la dentista para consultar");
-            doctorComboBox.SelectedItem = "Seleccione el/la dentista para consultar";
-            arrayCita = registrarFechas.GetArray();
-            foreach (Cita cita in arrayCita)
-            {
-                string nombre ="ID:" +" "+cita.Doctor.Identificacion+" " +"Nombre: "+ cita.Doctor.Nombre +" "+ cita.Doctor.Apellido1 ; 
+            doctorComboBox.Items.Add("Seleccione el/la Doctor para consultar");
+            doctorComboBox.SelectedItem = "Seleccione el/la Doctor para consultar";
+            citaLista = reportes.retornarCitaDoctoresLista();
 
- 
-                if (!doctorComboBox.Items.Contains(nombre))
+            if (citaLista.Count == 0)
+            {
+                MessageBox.Show("No hay citas registradas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            else
+            {
+                foreach (Cita cita in citaLista)
                 {
-                    doctorComboBox.Items.Add(nombre);
+                    doctorComboBox.Items.Add(cita.id_doctor.identificacion + "." + " " + cita.id_doctor.nombre + " " + cita.id_doctor.apellido1 + " " + cita.id_doctor.apellido2);
+
+
                 }
             }
 
 
-        }
 
+
+        }
+        // realiza la consulta
         private void Consultar_Click(object sender, EventArgs e)
         {
-
-            reportes.SetArrya(arrayCita);
-            string[] infoDoctorSeparada= doctorComboBox.Text.Split(' ');
-            reportesPorFecha = reportes.ReporteFechas(int.Parse(infoDoctorSeparada[1]));
+            citaLista.Clear();
+            citaLista = reportes.retornarCita();
             dataGridCita.Rows.Clear();
-
-
-
-            foreach (Cita cita in reportesPorFecha.Where(c => c != null))
+            if (doctorComboBox.SelectedItem.ToString() == "Seleccione el/la Doctor para consultar")
             {
+                MessageBox.Show("No ha seleccionado una opcion para el reporte", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
 
-                dataGridCita.Rows.Add(cita.Numero, cita.FechaHoraCita, cita.TipoConsulta.Descripcion, cita.Cliente.Nombre + " " + cita.Cliente.Apellido1, cita.Doctor.Nombre + " " + cita.Doctor.Apellido1);
+            }
+            else{
+                string[] infoSeparado = doctorComboBox.Text.Split('.');
+                short idDoctor = short.Parse(infoSeparado[0]);
 
+                foreach (Cita cita in citaLista)
+                {
+                    if (cita.id_doctor.identificacion == idDoctor)
+                    {
+                        dataGridCita.Rows.Add(cita.numero, cita.fec_hor_cita, cita.cod_tip_consulta.descripcion, cita.id_cliente.nombre + " " + cita.id_cliente.apellido1 + " " + cita.id_cliente.apellido2, cita.id_doctor.nombre + " " + cita.id_doctor.apellido1 + " " + cita.id_doctor.apellido2);
+                    }
+
+                }
             }
         }
     }

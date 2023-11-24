@@ -4,39 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CapaDatos;
+/* Uned III Cuatrimestre 
+ * Eduardo Cespedes miranda 
+ * Descripcion: actualizacion de la capa de negocios 
+ * fecha: 14/11/2023
+ */
 
 namespace CapaLogicaNegocio
 {
     public class CN_ReporteCliente
     {
-
-
-        private Cita[] arrayCitas = new Cita[20];
-        private Cita[] reporteCitas = new Cita[20];
-
-        public void SetArrya(Cita[] arrayCitas)
+      private CD_Citas d_citas= new CD_Citas();
+        
+        public List<Cita> retornarCita()
         {
-
-            this.arrayCitas = arrayCitas;
+            List<Cita> citaLista = new List<Cita>();
+            citaLista= d_citas.GetCitasList();
+            return citaLista;
+        }
+        public List<Cita> retornarCitaClientesLista()
+        {
+            List<Cita> citaLista = new List<Cita>();
+            citaLista = d_citas.GetCitasClientes();
+            return citaLista;
         }
 
-        public Cita[] ReporteFechas(int id)
-        {
-
-
-            reporteCitas = new Cita[20];
-            for (int i = 0; i < arrayCitas.Length; i++)
-            {
-
-                if (arrayCitas[i].Cliente.Identificacion == id)
-                {
-                    reporteCitas[i] = arrayCitas[i];
-                }
-
-            }
-
-            return reporteCitas;
-
-        }
     }
 }

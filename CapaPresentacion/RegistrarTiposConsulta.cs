@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using CapaLogicaNegocio;
 using CapaEntidades;
+using CapaPresentacion.clasesAuxiliaries;
+using CapaDatos;
+
 
 
 
@@ -23,13 +26,15 @@ namespace CapaPresentacion
     public partial class RegistrarTiposConsulta : Form
     {
         // atributos de la clase
-        private int id;
-        private int idBuscar;
+        private short id;
+        private short idBuscar;
         private string descripcion;
         private char estado;
-        private int cTipoConsultasIngresadas = 0;
+
         private CN_TipoConsulta tipoConsulta = new CN_TipoConsulta();
-        private TipoConsulta[] arrayTipConsultas= new TipoConsulta[10];
+        private List<Tipo_Consulta>  tipConsultasLista= new List<Tipo_Consulta>();
+        private CN_VerificacionId verificacion;
+        private CD_TiposConsultas d_TiposConsultas = new CD_TiposConsultas();
         public RegistrarTiposConsulta()
         {
             InitializeComponent();
@@ -44,7 +49,7 @@ namespace CapaPresentacion
             dataGridTiposCitas.Columns["Column1"].ReadOnly = true;
             dataGridTiposCitas.Columns["Column2"].ReadOnly = true;
             dataGridTiposCitas.Columns["Column3"].ReadOnly = true;
-
+            verificacion = new CN_VerificacionId();
             ActualizarDataGrid();
         }
 
@@ -62,40 +67,17 @@ namespace CapaPresentacion
         }
        
 
-        /* metodo con una expresion regular para no permitir que se escriban caracteres
-         * que no sean enteros en los campos id*/
+        /*un evento que llama a un metodo ce la clase VerificacionId para verificar si se presiona un entero
+         con una expresion regular */
         private void idTextKeyPress(object sender, KeyPressEventArgs e)
         {
-            // expresion regular
-            Regex regex = new Regex("[^0-9]+");
-            TextBox textBox = sender as TextBox;
-            /* se declara una variable de tipoo textBox sender es el que desencadeno el evento 
-             * con el as se realiza la conversion a TextBox para poder usarse en el provider para cualquier
-             * textbox que desencadena la accion 
-             */
-             
-            if (!char.IsControl(e.KeyChar) && regex.IsMatch(e.KeyChar.ToString()))
-            {
-
-                errorProvider1.SetError(textBox, "Por favor, ingrese solo números.");
-                e.Handled = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox, "");
-     
-            }
-            
+            verificacion.idTextKeyPress(sender, e, errorProvider1);
         }
         // metodo para registrar los datos
         private void Registrar_Click(object sender, EventArgs e)
         {
             string mensaje = "";
-            if (cTipoConsultasIngresadas >9)
-            {
-                MessageBox.Show("Ya se ha insertado 10 tipos de consultas el sistema no permite añdir mas de 10 tipos de consultas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+
          
             // verificacion para determinar si los campos estan vacios o escritos o si el combo box ha sido seleccionado
             if((idText.Text=="" || idText.Text == "Ingrese el Id de la consulta a registrar")|| descripcionText.Text == "" || (descripcionText.Text == "Ingrese la descripcion de la consulta a registrar")|| estadoComboBox.SelectedItem.ToString() == "Selecciones un estado")
@@ -116,50 +98,39 @@ namespace CapaPresentacion
                     mensaje += "El estado no ha sido seleccionado";
                 }
                 MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
-
             }
             
             else
             {
-                id = int.Parse(idText.Text);
+                id =verificacion.VerificarShort(idText.Text);// este metodo tiene un  Trycatch la correccion del proyecto pasado
+                if (id <0 && id > 9999)
+                    {
+                    MessageBox.Show("Id Incorrecto por favor ingrese un id correcto", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
                 descripcion = descripcionText.Text;
-                if(estadoComboBox.SelectedIndex==1)
-                {
-                    estado ='A';
-                }
-                if (estadoComboBox.SelectedIndex == 2)
-                {
-                    estado = 'I';
-                }
+                estado = (estadoComboBox.Text == "Activo" ? 'A' : 'I');
 
-                tipoConsulta.Registrar(id, descripcion, estado, cTipoConsultasIngresadas);
-                cTipoConsultasIngresadas++;
-                arrayTipConsultas = tipoConsulta.GetArray();
+                tipoConsulta.Registrar(id, descripcion, estado);
                 idText.Text= "Ingrese el Id de la consulta a registrar";
                 idText.ForeColor= Color.DimGray;
                 descripcionText.Text= "Ingrese la descripcion de la consulta a registrar";
                 descripcionText.ForeColor = Color.DimGray;
                 estadoComboBox.SelectedItem = "Selecciones un estado";
                 ActualizarDataGrid();
-
-
-
-
             }
         }
 
 
         // metodo que actualiza la dataGrid
         private void ActualizarDataGrid()
+
         {
             dataGridTiposCitas.Rows.Clear();
-            foreach (TipoConsulta consulta in arrayTipConsultas.Where(c => c != null)) {
-                dataGridTiposCitas.Rows.Add(consulta.Numero, consulta.Descripcion, consulta.Estado);
-
+            tipConsultasLista = d_TiposConsultas.GetTipoConsultaList();
+            foreach (Tipo_Consulta consulta in tipConsultasLista) {
+                dataGridTiposCitas.Rows.Add(consulta.numero, consulta.descripcion, consulta.estado);
             }
-      
-
         }
 
         // metodo para buscar el id y modificar
@@ -172,26 +143,25 @@ namespace CapaPresentacion
             }
             else
             {
-                idBuscar=int.Parse(idBuscarText.Text);
-               
-                char estado=tipoConsulta.Encontrar(idBuscar);
-            
-   
-         
-                // if para que el comboBox se selecciones con el ultimo estado seleccionado
-                if (estado == 'A')
+                idBuscar = verificacion.VerificarShort(idBuscarText.Text);// este metodo tiene un  Trycatch la correccion del proyecto pasado
+                if (idBuscar < 0 && idBuscar > 9999)
                 {
+                    MessageBox.Show("Id Incorrecto por favor ingrese un id correcto", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                bool existe=tipoConsulta.existe(idBuscar);
+                if (existe)
+                {
+                    MessageBox.Show("El cliente fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK);
                     desactivar();
-                    ComboBoxIdEncontrado.SelectedItem = "Activo";
-                
+                    string opcionAsignada= tipoConsulta.retornarEstado(idBuscar);
+                    ComboBoxIdEncontrado.SelectedItem= opcionAsignada;
 
                 }
-                // de la misma menera que el if de arriba pero para inactivo
-                else if(estado == 'I')
+                else
                 {
-                    desactivar();
-                    ComboBoxIdEncontrado.SelectedItem = "Inactivo";
-              
+                    MessageBox.Show("El Tipo de consulta No fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
         }
@@ -199,23 +169,14 @@ namespace CapaPresentacion
         private void cancelar_Click(object sender, EventArgs e)
         {
             activar();
-
-
         }
 
         private void modificar_Click(object sender, EventArgs e)
         {
-         
-            if (ComboBoxIdEncontrado.SelectedIndex == 0)
-            {
-                estado = 'A';
-            }
-            if (ComboBoxIdEncontrado.SelectedIndex == 1)
-            {
-                estado = 'I';
-            }
-            tipoConsulta.Modificar(idBuscar, estado);
-           
+  
+            estado = (ComboBoxIdEncontrado.Text=="Activo" ? 'A' : 'I');
+            descripcion = tipoConsulta.retornarDescripcion(idBuscar);
+            tipoConsulta.Modificar(idBuscar, descripcion, estado);
             ActualizarDataGrid();
             activar();
 
@@ -250,7 +211,5 @@ namespace CapaPresentacion
             idBuscarText.ForeColor = Color.DimGray;
 
         }
-
-    
     }
 }

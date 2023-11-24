@@ -232,9 +232,9 @@
             // 
             this.ComboBoxIdEncontrado.Enabled = false;
             this.ComboBoxIdEncontrado.FormattingEnabled = true;
-            this.ComboBoxIdEncontrado.Location = new System.Drawing.Point(430, 346);
+            this.ComboBoxIdEncontrado.Location = new System.Drawing.Point(457, 346);
             this.ComboBoxIdEncontrado.Name = "ComboBoxIdEncontrado";
-            this.ComboBoxIdEncontrado.Size = new System.Drawing.Size(214, 21);
+            this.ComboBoxIdEncontrado.Size = new System.Drawing.Size(289, 21);
             this.ComboBoxIdEncontrado.TabIndex = 14;
             // 
             // modificar
@@ -244,7 +244,7 @@
             this.modificar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.modificar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(76)))), ((int)(((byte)(119)))));
             this.modificar.ImageAlign = System.Drawing.ContentAlignment.TopRight;
-            this.modificar.Location = new System.Drawing.Point(652, 340);
+            this.modificar.Location = new System.Drawing.Point(752, 340);
             this.modificar.Name = "modificar";
             this.modificar.Size = new System.Drawing.Size(119, 31);
             this.modificar.TabIndex = 15;
@@ -260,7 +260,7 @@
             this.cancelar.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cancelar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(76)))), ((int)(((byte)(119)))));
             this.cancelar.ImageAlign = System.Drawing.ContentAlignment.TopRight;
-            this.cancelar.Location = new System.Drawing.Point(777, 340);
+            this.cancelar.Location = new System.Drawing.Point(890, 340);
             this.cancelar.Name = "cancelar";
             this.cancelar.Size = new System.Drawing.Size(119, 31);
             this.cancelar.TabIndex = 16;

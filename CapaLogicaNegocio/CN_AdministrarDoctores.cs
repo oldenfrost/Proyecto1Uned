@@ -1,48 +1,92 @@
-﻿using CapaEntidades;
+﻿using CapaDatos;
+using CapaEntidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+/* Uned III Cuatrimestre 
+ * Eduardo Cespedes miranda 
+ * Descripcion: actualizacion de la capa de negocios 
+ * fecha: 14/11/2023
+ */
 namespace CapaLogicaNegocio
 {
     public class CN_AdministrarDoctores
     {
+        //atributos
+  
+        private List<Doctor> ListaDoctor = new List<Doctor>();
+        private CD_Doctores d_Doctores = new CD_Doctores();
 
-        private static Doctor[] arrayDoctor = new Doctor[20];
-        private List<Doctor> auxListaDoctor = new List<Doctor>();
-
-        public void Registrar(int id, string nombre, string apellido1, string apellido2, char estado)
+        public void Registrar(long id, string nombre, string ape1, string ape2, char e)
         {
-            Doctor nuevoDoctor = new Doctor
+            Doctor nuevoDoctores = new Doctor
             {
-                Identificacion = id,
-                Nombre = nombre,
-                Apellido1 = apellido1,
-                Apellido2 = apellido2,
-                Estado = estado
+                identificacion = id,
+                nombre = nombre,
+                apellido1 = ape1,
+                apellido2 = ape2,
+                estado = e
             };
 
-            if (auxListaDoctor.Any(c => c.Identificacion == nuevoDoctor.Identificacion))
+            if (existe(id))
             {
                 MessageBox.Show("El ID ya existe. Por favor, ingrese un ID único.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
 
             }
-            else
+            if (existe(id) == false)
             {
-                MessageBox.Show("El doctor  Registrado correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
-                auxListaDoctor.Add(nuevoDoctor);
+                MessageBox.Show("El cliente fue Registrado correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
+                d_Doctores.insertarDoctores(nuevoDoctores);
             }
-            arrayDoctor = auxListaDoctor.ToArray();
+
+
+
 
         }
-
-        public Doctor[] GetArray()
+        public void Modificar(long id, string nombre, string ape1, string ape2, DateTime fecha, char g)
         {
-            return arrayDoctor;
+            Cliente nuevoCliente = new Cliente
+            {
+                identificacion = id,
+                nombre = nombre,
+                apellido1 = ape1,
+                apellido2 = ape2,
+                fec_nacimiento = fecha,
+                genero = g
+            };
+           // d_Doctores.ActualizarTipoConsulta(nuevoCliente);
         }
+
+
+        public bool existe(long id)
+        {
+            ListaDoctor = d_Doctores.GetDoctorList();
+            bool existe = false;
+            if (ListaDoctor.Count == 0)
+            {
+                existe = false;
+            }
+
+
+            foreach (Doctor doctor in  ListaDoctor)
+            {
+                if (doctor.identificacion == id)
+                {
+                    return true;
+                }
+                else
+                {
+                    existe = false;
+                }
+            }
+            return existe;
+        }
+
+      
 
     }
 }

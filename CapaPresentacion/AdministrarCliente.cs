@@ -1,5 +1,7 @@
-﻿using CapaEntidades;
+﻿using CapaDatos;
+using CapaEntidades;
 using CapaLogicaNegocio;
+using CapaPresentacion.clasesAuxiliaries;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +15,7 @@ using System.Windows.Forms;
 
 /* Uned III Cuatrimestre 
  * Eduardo Cespedes miranda 
- * Descripcion: funcion del menu Registrar consulta
+ * Descripcion: funcion para administrar cliente
  * fecha: 6/10/2023
  */
 
@@ -21,17 +23,19 @@ namespace CapaPresentacion
 {
     public partial class AdministrarCliente : Form
     {
-        private int id;
-        private int idBuscar;
+        //atributos
+        private long id;
+        private long idBuscar;
         private string nombre;
         private string apellido1;
         private string apellido2;
         private DateTime fecha;
         private char genero;
-        private int cTipoConsultasIngresadas = 0;
         private CN_AdministrarClientes clientes = new CN_AdministrarClientes();
-        private Cliente[] arrayClientes = new Cliente[20];
- 
+        private List<Cliente> listaCliente = new List<Cliente>();
+        private CD_Clientes d_Cliente = new CD_Clientes();
+        private CN_VerificacionId verificacion= new CN_VerificacionId();
+
         public AdministrarCliente()
         {
             InitializeComponent();
@@ -39,19 +43,20 @@ namespace CapaPresentacion
             generoComboBox.SelectedItem = "Seleccione El genero";
             generoComboBox.Items.Add("Femenino");
             generoComboBox.Items.Add("Masculino");
-            generoComboBox.Items.Add("No especificado");
+            generoComboBox.Items.Add("No Especificado");
             ComboBoxIdEncontrado.Items.Add("Femenino");
             ComboBoxIdEncontrado.Items.Add("Masculino");
-            ComboBoxIdEncontrado.Items.Add("No especificado");
+            ComboBoxIdEncontrado.Items.Add("No Especificado");
             generoComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             dataGridCliente.Columns["Column1"].ReadOnly = true;
             dataGridCliente.Columns["Column2"].ReadOnly = true;
             dataGridCliente.Columns["Column3"].ReadOnly = true;
             dataGridCliente.Columns["Column4"].ReadOnly = true;
-            dataGridCliente.Columns["Column5"].ReadOnly = true;
+            ActualizarDataGrid();
 
         }
         //metodos 
+
         //metodo para vaciar el texto 
         private void clickText(object sender, EventArgs e)
         {
@@ -63,37 +68,15 @@ namespace CapaPresentacion
         // metodo para verificar si se escribe entero 
         private void idTextKeyPress(object sender, KeyPressEventArgs e)
         {
-            // expresion regular
-            Regex regex = new Regex("[^0-9]+");
-            TextBox textBox = sender as TextBox;
-       
-
-            if (!char.IsControl(e.KeyChar) && regex.IsMatch(e.KeyChar.ToString()))
-            {
-
-                errorProvider1.SetError(textBox, "Por favor, ingrese solo números.");
-                e.Handled = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox, "");
-
-            }
+            CN_VerificacionId verificacion = new CN_VerificacionId();
+            verificacion.idTextKeyPress(sender, e, errorProvider1);
 
         }
-
-
-
-
         // metodo para registrar los datos
         private void Registrar_Click(object sender, EventArgs e)
         {
             string mensaje = "";
-            if (cTipoConsultasIngresadas > 19)
-            {
-                MessageBox.Show("Ya se ha insertado 10 tipos de consultas el sistema no permite añdir mas de 10 tipos de consultas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+          
 
             // verificacion para determinar si los campos estan vacios o escritos o si el combo box ha sido seleccionado
             if ((idText.Text == "" || idText.Text == "Ingrese el Id de la consulta a registrar") || nombreText.Text == "" || (nombreText.Text == "Ingrese el nombre del cliente a registrar") 
@@ -124,8 +107,6 @@ namespace CapaPresentacion
                     mensaje += "El Genero no ha sido seleccionado";
                 }
                 MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
             }
 
             else
@@ -137,24 +118,17 @@ namespace CapaPresentacion
                 fecha = fechaNacimiento.Value;
                 if (generoComboBox.SelectedIndex == 1)
                 {
-                   
                     genero = 'F';
                 }
                 if (generoComboBox.SelectedIndex == 2)
                 {
-             
                     genero = 'M';
                 }
                 if (generoComboBox.SelectedIndex == 3)
                 {
-                 
                     genero = 'N';
                 }
-     
-
                 clientes.Registrar(id, nombre, apellido1, apellido2, fecha, genero);
-                cTipoConsultasIngresadas++;
-                arrayClientes = clientes.GetArray();
                 idText.Text = "Ingrese el Id de la consulta a registrar";
                 nombreText.Text = "Ingrese el nombre del cliente a registrar";
                 apellido1Text.Text = "Ingrese el apellido del cliente a registrar";
@@ -166,78 +140,61 @@ namespace CapaPresentacion
                 generoComboBox.SelectedItem = "Seleccione El genero";
                 fechaNacimiento.Value = DateTime.Now;
                 ActualizarDataGrid();
-
-
-
-
             }
         }
 
+        // actualiza el grid
         private void ActualizarDataGrid()
         {
-            dataGridCliente.Rows.Clear();
-            foreach (Cliente cliente in arrayClientes.Where(c => c != null))
-            {
-                dataGridCliente.Rows.Add(cliente.Identificacion, cliente.Nombre, cliente.Apellido1, cliente.Apellido2, cliente.FechaNacimiento, cliente.Genero);
 
+            dataGridCliente.Rows.Clear();
+            listaCliente = d_Cliente.GetClienteList();
+            foreach (Cliente cliente in listaCliente)
+            {
+                dataGridCliente.Rows.Add(cliente.identificacion, cliente.nombre, cliente.apellido1, cliente.apellido2, cliente.fec_nacimiento, cliente.genero);
             }
 
 
+
         }
-
-
 
         // metodo para buscar el id y modificar
         private void buscar_Click(object sender, EventArgs e)
         {
-            // detecta si el campo esta vacio
+
             if (idBuscarText.Text == "" || idBuscarText.Text == "Ingrese el Id que desea modificar su estado")
             {
                 MessageBox.Show("El campo de id a Buscar esta vacio o no ha sido escrito", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                idBuscar = int.Parse(idBuscarText.Text);
-
-            
-                char separador = ',';
-                string[] partes = clientes.Encontrar(idBuscar).Split(separador);
-
-                fechaModificacion.Value = DateTime.Parse(partes[1]);
-
-
-
-                // if para que el comboBox se selecciones con el ultimo estado seleccionado
-                if (partes[0] == "F")
+                idBuscar = verificacion.VerificarShort(idBuscarText.Text);// este metodo tiene un  Trycatch la correccion del proyecto pasado
+             
+                bool existe = clientes.existe(idBuscar);
+                if (existe)
                 {
+                    MessageBox.Show("El cliente fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK);
                     desactivar();
-                    ComboBoxIdEncontrado.SelectedItem = "Femenino";
-
-
-                }
-                // de la misma menera que el if de arriba pero para inactivo
-                else if (partes[0] == "M")
-                {
-                    desactivar();
-                    ComboBoxIdEncontrado.SelectedItem = "Masculino";
+                    string opcionAsignada = clientes.retornarGenero(idBuscar);
+                    fechaModificacion.Value = clientes.retornaFecha(idBuscar);
+                    ComboBoxIdEncontrado.SelectedItem = opcionAsignada;
 
                 }
                 else
                 {
-                    desactivar();
-                    ComboBoxIdEncontrado.SelectedItem = "No especificado";
+                    MessageBox.Show("El Tipo de consulta No fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
             }
+           
         }
         // evento del boton cancelar para cancerla la modificacion del dato
         private void cancelar_Click(object sender, EventArgs e)
         {
             activar();
         }
-
         private void modificar_Click(object sender, EventArgs e)
         {
-
             if (ComboBoxIdEncontrado.SelectedIndex == 0)
             {
                 genero = 'F';
@@ -250,13 +207,16 @@ namespace CapaPresentacion
             {
                 genero = 'N';
             }
+            nombre = clientes.retornarNombre(idBuscar);
+            apellido1 = clientes.retornarApellido1(idBuscar);
+            apellido2 = clientes.retornarApellido2(idBuscar);
             fecha = fechaModificacion.Value;
+            clientes.Modificar(idBuscar, nombre, apellido1, apellido2, fecha, genero);
 
-
-            clientes.Modificar(idBuscar,genero,fecha);
             ActualizarDataGrid();
             activar();
         }
+        //metodo desactiva algunas opcion
         private void desactivar()
         {
             idBuscarText.Enabled = false;
@@ -272,8 +232,8 @@ namespace CapaPresentacion
             generoComboBox.Enabled = false;
             registrar.Enabled = false;
             fechaModificacion.Enabled=true;
-
         }
+        //metodo activa algunas opciones
         public void activar()
         {
             idBuscarText.Enabled = true;
@@ -283,19 +243,15 @@ namespace CapaPresentacion
             ComboBoxIdEncontrado.Enabled = false;
             ComboBoxIdEncontrado.SelectedIndex = -1;
             idText.Enabled = true;
-            nombreText.Enabled = false;
-            apellido1Text.Enabled = false;
-            apellido2Text.Enabled = false;
-            fechaNacimiento.Enabled = false;
-            generoComboBox.Enabled = false;
-            registrar.Enabled = false;
+            nombreText.Enabled = true;
+            apellido1Text.Enabled = true;
+            apellido2Text.Enabled = true;
+            fechaNacimiento.Enabled = true;
+            generoComboBox.Enabled = true;
+            registrar.Enabled = true;
             idBuscarText.Text = "Ingrese el Id que desea modificar su estado";
             idBuscarText.ForeColor = Color.DimGray;
 
         }
-
-
-
-
     }
 }

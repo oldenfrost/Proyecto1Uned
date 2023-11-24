@@ -187,7 +187,7 @@
             this.Column4});
             this.dataGridCliente.Location = new System.Drawing.Point(298, 40);
             this.dataGridCliente.Name = "dataGridCliente";
-            this.dataGridCliente.Size = new System.Drawing.Size(359, 337);
+            this.dataGridCliente.Size = new System.Drawing.Size(360, 337);
             this.dataGridCliente.TabIndex = 35;
             // 
             // Column1

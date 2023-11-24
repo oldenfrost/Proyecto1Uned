@@ -1,95 +1,182 @@
-﻿using CapaEntidades;
+﻿using CapaDatos;
+using CapaEntidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+/* Uned III Cuatrimestre 
+ * Eduardo Cespedes miranda 
+ * Descripcion: actualizacion de la capa de negocios 
+ * fecha: 14/11/2023
+ */
+
 
 namespace CapaLogicaNegocio
 {
     public class CN_AdministrarClientes
     {
+        // atributos
 
-        private static Cliente[] arrayCliente = new Cliente[20];
-        private List<Cliente> auxListaCliente = new List<Cliente>();
-        public void Registrar(int id, string nombre, string apellido1, string apellido2, DateTime fecha, char genero)
+        private List<Cliente> ListaCliente = new List<Cliente>();
+        private CD_Clientes d_Cliente = new CD_Clientes();
+
+        public void Registrar(long id, string nombre, string ape1, string ape2, DateTime fecha, char g)
         {
             Cliente nuevoCliente = new Cliente
             {
-                Identificacion = id,
-                Nombre = nombre,
-                Apellido1 = apellido1,
-                Apellido2=apellido2,
-                FechaNacimiento=fecha,
-                Genero = genero
+                identificacion = id,
+                nombre = nombre,
+                apellido1 = ape1,
+                apellido2 = ape2,
+                fec_nacimiento = fecha,
+                genero = g
             };
-          
-            if (auxListaCliente.Any(c => c.Identificacion == nuevoCliente.Identificacion))
+
+            if (existe(id))
             {
                 MessageBox.Show("El ID ya existe. Por favor, ingrese un ID único.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+
             }
-            else
+            if (existe(id) == false)
             {
                 MessageBox.Show("El cliente fue Registrado correctamente", "Añadido Correctamente", MessageBoxButtons.OK);
-                auxListaCliente.Add(nuevoCliente);
+                d_Cliente.insertarCliente(nuevoCliente);
             }
-            arrayCliente = auxListaCliente.ToArray();
+
+
+
 
         }
-
-        public Cliente[] GetArray()
+        public void Modificar(long id, string nombre, string ape1, string ape2, DateTime fecha, char g)
         {
-           
-            return arrayCliente;
+            Cliente nuevoCliente = new Cliente
+            {
+                identificacion = id,
+                nombre = nombre,
+                apellido1 = ape1,
+                apellido2 = ape2,
+                fec_nacimiento = fecha,
+                genero = g
+            };
+            d_Cliente.ActualizarTipoConsulta(nuevoCliente);
         }
 
 
-        public string Encontrar(int idBuscar)
+        public bool existe(long id)
+        {
+            ListaCliente = d_Cliente.GetClienteList();
+            bool existe = false;
+            if (ListaCliente.Count == 0)
+            {
+                existe = false;
+            }
+
+
+            foreach (Cliente cliente in ListaCliente)
+            {
+                if (cliente.identificacion == id)
+                {
+                    return true;
+                }
+                else
+                {
+                    existe = false;
+                }
+            }
+            return existe;
+        }
+        public string retornarGenero(long id)
         {
 
- 
-            
-            string datoCompleto = "";
-            if (arrayCliente.Any(c => c != null && c.Identificacion == idBuscar))
+            string descripcion = "";
+            foreach (Cliente cliente in ListaCliente)
             {
+                if (cliente.identificacion == id)
+                {
+                    if (cliente.genero == 'F')
+                    {
+                        descripcion = "Femenino";
+                    }
+                    else if (cliente.genero == 'M')
+                    {
+                        descripcion = "Masculino";
+                    }
+                    else
+                    {
+                        descripcion = "No Especificado";
+                    }
 
-                var consultaParaActualizar = arrayCliente.FirstOrDefault(c => c.Identificacion == idBuscar);
-
-                datoCompleto = consultaParaActualizar.Genero.ToString();
-                datoCompleto += "," + consultaParaActualizar.FechaNacimiento.ToString();
-                MessageBox.Show("El dato fue Encontrado correctamente", "Encontrado", MessageBoxButtons.OK);
-
+                }
 
             }
-            else
-            {
-                MessageBox.Show("El Id no existe por favor verifique en la tabla para visualizar los datos insertados", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-
-            }
-            return datoCompleto;
-
+            return descripcion;
         }
-
-
-        // metodo para modificar
-        public void Modificar(int idBuscar, char genero, DateTime fecha)
+        public DateTime retornaFecha(long id)
         {
-            if (arrayCliente.Any(c => c != null && c.Identificacion == idBuscar))
+            DateTime fecha = new DateTime();
+            foreach (Cliente cliente in ListaCliente)
             {
+                if (cliente.identificacion == id)
+                {
+                    fecha = cliente.fec_nacimiento;
 
-                var consultaParaActualizar = arrayCliente.FirstOrDefault(c => c.Identificacion == idBuscar);
-                consultaParaActualizar.Genero = genero;
-                consultaParaActualizar.FechaNacimiento = fecha;
-                MessageBox.Show("El dato fue Actualizado correctamente", "Actualizado", MessageBoxButtons.OK);
 
+                }
 
             }
-
+            return fecha;
 
         }
+        public string retornarNombre(long id)
+        {
+            string nombre = "";
+            foreach (Cliente cliente in ListaCliente)
+            {
+                if (cliente.identificacion == id)
+                {
+                    nombre = cliente.nombre;
 
 
+                }
+
+            }
+            return nombre;
+
+        }
+        public string retornarApellido1(long id)
+        {
+            string apellido1 = "";
+            foreach (Cliente cliente in ListaCliente)
+            {
+                if (cliente.identificacion == id)
+                {
+                    apellido1 = cliente.apellido1;
+
+
+                }
+
+            }
+            return apellido1;
+
+        }
+        public string retornarApellido2(long id)
+        {
+            string apellido2 = "";
+            foreach (Cliente cliente in ListaCliente)
+            {
+                if (cliente.identificacion == id)
+                {
+                    apellido2 = cliente.apellido2;
+
+
+                }
+
+            }
+            return apellido2;
+
+        }
     }
 }
